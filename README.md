@@ -10,7 +10,7 @@
 
 This comprehensive solution demonstrates a production-ready **Conversational Data Analyst Assistant** that transforms how organizations interact with their data. Instead of requiring SQL expertise or complex dashboard navigation, users can simply ask questions in natural language and receive intelligent analysis backed by real data.
 
-The project showcases modern cloud-native architecture using **AWS Bedrock AgentCore** for scalable AI agent deployment, **Strands Agents SDK** for intelligent conversation handling, and a **React-based frontend** for seamless user interaction.
+The project showcases modern cloud-native architecture using **AWS Bedrock AgentCore** for scalable AI agent deployment, **Strands Agents SDK** for intelligent conversation handling, and a **React-based frontend** for seamless user interaction. 
 
 ### 🎯 Key Capabilities
 
