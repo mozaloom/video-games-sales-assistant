@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Default configuration
-DEFAULT_REGION = "us-west-2"
+DEFAULT_REGION = "us-east-1"
 DEFAULT_ENVIRONMENT = "prod"
 DEFAULT_MEMORY_NAME = "AssistantAgentMemory"
 DEFAULT_EXPIRY_DAYS = 7
@@ -43,7 +43,7 @@ def create_memory(environment: str = DEFAULT_ENVIRONMENT,
         str: Memory ID if successful, None otherwise
     """
     logger.info(f"Creating memory resource: {memory_name}")
-    client = MemoryClient(environment=environment, region_name=DEFAULT_REGION)
+    client = MemoryClient(region_name=DEFAULT_REGION)
     
     try:
         # Create memory resource for short-term conversation storage
@@ -92,7 +92,7 @@ def list_memories(environment: str = DEFAULT_ENVIRONMENT) -> List[Dict[str, Any]
         List[Dict]: List of memory resources
     """
     logger.info("Listing memory resources...")
-    client = MemoryClient(environment=environment, region_name=DEFAULT_REGION)
+    client = MemoryClient(region_name=DEFAULT_REGION)
     
     try:
         memories = client.list_memories()

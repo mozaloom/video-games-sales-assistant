@@ -90,37 +90,45 @@ def read_messages_by_session(
         print("AGENT_INTERACTIONS_TABLE_NAME not configured")
         return []
         
-    dynamodb_resource = boto3.resource('dynamodb', region_name=CONFIG["AWS_REGION"])
-    table = dynamodb_resource.Table(conversation_table)
-    
-    messages = []
-    last_evaluated_key = None
-    
-    while True:
-        query_params = {
-            'KeyConditionExpression': Key('session_id').eq(session_id),
-            'ProjectionExpression': 'message',
-            'Limit': 100
-        }
+    try:
+        dynamodb_resource = boto3.resource('dynamodb', region_name=CONFIG["AWS_REGION"])
+        table = dynamodb_resource.Table(conversation_table)
         
-        # Add pagination token if this isn't the first page
-        if last_evaluated_key:
-            query_params['ExclusiveStartKey'] = last_evaluated_key
+        messages = []
+        last_evaluated_key = None
         
-        response = table.query(**query_params)
+        while True:
+            query_params = {
+                'KeyConditionExpression': Key('session_id').eq(session_id),
+                'ProjectionExpression': '#msg',
+                'ExpressionAttributeNames': {'#msg': 'message'},
+                'ScanIndexForward': True,
+                'Limit': 100
+            }
+            
+            # Add pagination token if this isn't the first page
+            if last_evaluated_key:
+                query_params['ExclusiveStartKey'] = last_evaluated_key
+            
+            response = table.query(**query_params)
+            
+            # Add the items to our result list
+            for item in response.get('Items', []):
+                if 'message' in item:
+                    messages.append(json.loads(item.get('message')))
+            
+            # Update the pagination token
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            
+            # If there's no pagination token, we've reached the end
+            if not last_evaluated_key:
+                break
         
-        # Add the items to our result list
-        for item in response.get('Items', []):
-            messages.append(json.loads(item.get('message')))
+        return messages
         
-        # Update the pagination token
-        last_evaluated_key = response.get('LastEvaluatedKey')
-        
-        # If there's no pagination token, we've reached the end
-        if not last_evaluated_key:
-            break
-    
-    return messages
+    except Exception as e:
+        print(f"Error reading messages from DynamoDB: {e}")
+        return []
 
 
 def messages_objects_to_strings(obj_array):
@@ -155,7 +163,7 @@ def messages_objects_to_strings(obj_array):
         if obj["role"] == "assistant" and "content" in obj:
             for item in obj["content"]:
                 if "toolUse" in item and "name" in item['toolUse'] and item['toolUse']['name']=="execute_sql_query":
-                    data = f"{item['toolUse']['input']["description"]}: {item['toolUse']['input']["sql_query"]}"
+                    data = f"{item['toolUse']['input']['description']}: {item['toolUse']['input']['sql_query']}"
                     filtered_objs.append({ 'role': 'assistant', 'content': [{ 'text' : data }] })
                     break
 
@@ -202,23 +210,24 @@ def save_agent_interactions(session_id: str, prompt_uuid: str, starting_message_
         print("AGENT_INTERACTIONS_TABLE_NAME not configured")
         return False
         
-    dynamodb = boto3.resource('dynamodb', region_name=CONFIG["AWS_REGION"])
-    table = dynamodb.Table(conversation_table)
     try:
+        dynamodb = boto3.resource('dynamodb', region_name=CONFIG["AWS_REGION"])
+        table = dynamodb.Table(conversation_table)
+        
         with table.batch_writer() as batch:
+            current_message_id = starting_message_id
             for i, message_text in enumerate(messages_to_save):
                 if i < starting_message_id:
                     continue
-                message_id = starting_message_id
                 batch.put_item(
                     Item={
                         'session_id': session_id,
-                        'message_id': message_id,
+                        'message_id': current_message_id,
                         'prompt_uuid': prompt_uuid,
                         'message': message_text
                     }
                 )
-                starting_message_id += 1
+                current_message_id += 1
         return True
     except Exception as e:
         print(f"Error writing messages: {e}")
