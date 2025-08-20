@@ -143,7 +143,7 @@ export const generateChart = async (answer) => {
   } catch (error) {
     console.error("Chart generation failed:", error);
     return {
-      rationale: "Error generating or parsing chart data.",
+      rationale: "Chart generation temporarily unavailable.",
     };
   }
 };

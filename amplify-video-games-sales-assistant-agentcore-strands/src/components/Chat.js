@@ -35,7 +35,13 @@ const Chat = ({ userName = "Guest User" }) => {
   const [controlAnswers, setControlAnswers] = React.useState([]);
   const [answers, setAnswers] = React.useState([]);
   const [query, setQuery] = React.useState("");
-  const [sessionId, setSessionId] = React.useState(uuidv4());
+  const [sessionId, setSessionId] = React.useState(() => {
+    const stored = localStorage.getItem('chat-session-id');
+    if (stored) return stored;
+    const newId = uuidv4();
+    localStorage.setItem('chat-session-id', newId);
+    return newId;
+  });
   const [errorMessage, setErrorMessage] = React.useState("");
   const [height, setHeight] = React.useState(480);
   const [size, setSize] = React.useState([0, 0]);
