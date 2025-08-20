@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "RDSDataAPIAccess",
+            "Effect": "Allow",
+            "Action": [
+                "rds-data:ExecuteStatement",
+                "rds-data:BatchExecuteStatement"
+            ],
+            "Resource": "arn:aws:rds:us-east-1:546229927446:cluster:cdkagentcorestrandsdataan-assistantclusterfcd2cfae-874es5vbkehs"
+        },
+        {
+            "Sid": "SecretsManagerAccess",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": "arn:aws:secretsmanager:us-east-1:546229927446:secret:agentcore-data-analyst-assistant-db-secret-WDzNK3"
+        }
+    ]
+}

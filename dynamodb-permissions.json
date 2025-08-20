@@ -1,0 +1,14 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem"
+            ],
+            "Resource": "arn:aws:dynamodb:us-east-1:546229927446:table/CdkAgentCoreStrandsDataAnalystAssistantStack-RawQueryResults82B00746-1DKMJXN2M4HIG"
+        }
+    ]
+}

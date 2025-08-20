@@ -1,0 +1,21 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "BedrockAgentCoreMemoryAccess",
+            "Effect": "Allow",
+            "Action": [
+                "bedrock-agentcore:ListEvents",
+                "bedrock-agentcore:CreateEvent",
+                "bedrock-agentcore:GetMemoryRecord",
+                "bedrock-agentcore:GetMemory",
+                "bedrock-agentcore:RetrieveMemoryRecords",
+                "bedrock-agentcore:DeleteMemoryRecord",
+                "bedrock-agentcore:ListMemoryRecords",
+                "bedrock-agentcore:ListSessions",
+                "bedrock-agentcore:GetEvent"
+            ],
+            "Resource": "arn:aws:bedrock-agentcore:us-east-1:546229927446:memory/DataAnalystAssistantMemory-2uO49M7yq5"
+        }
+    ]
+}

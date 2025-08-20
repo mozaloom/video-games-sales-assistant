@@ -240,7 +240,7 @@ video-games-sales-assistant/
 ### Configuration Details
 
 **Environment Variables Required**:
-- `AWS_REGION`: Deployment region (recommended: us-west-2 or us-east-1)
+- `AWS_REGION`: Deployment region (recommended: us-east-1-2 or us-east-1)
 - `MEMORY_ID`: AgentCore memory identifier (auto-generated)
 - Database credentials managed via AWS Secrets Manager
 
@@ -492,7 +492,7 @@ This solution showcases the power of modern AI and cloud technologies:
 ## ⚠️ Important Notes
 
 > [!NOTE]
-> **Recommended Regions**: Deploy in Oregon (us-west-2) or N. Virginia (us-east-1) for optimal performance and feature availability.
+> **Recommended Regions**: Deploy in Oregon (us-east-1-2) or N. Virginia (us-east-1) for optimal performance and feature availability.
 
 > [!IMPORTANT] 
 > **Cost Management**: Remember to clean up resources after testing to avoid unnecessary charges. Follow the cleanup procedures in each component's README.

@@ -168,7 +168,7 @@ async def agent_invocation(payload):
         bedrock_model_id = payload.get("bedrock_model_id", "us.anthropic.claude-3-7-sonnet-20250219-v1:0")
         prompt_uuid = payload.get("prompt_uuid", str(uuid4()))
         user_timezone = payload.get("user_timezone", "US/Pacific")
-        session_id = payload.get("session_id", str(uuid4()))
+        session_id = payload.get("session_id", "default-session")
         user_id = payload.get("user_id", "guest")
         last_k_turns = int(payload.get("last_k_turns", 20))
         
@@ -192,12 +192,24 @@ async def agent_invocation(payload):
         # Prepare system prompt with user's timezone
         system_prompt = DATA_ANALYST_SYSTEM_PROMPT.replace("{timezone}", user_timezone)
         
+        # Create memory hooks with error handling
+        memory_hooks = []
+        try:
+            if session_id and memory_id:
+                memory_hooks = [MemoryHookProvider(client, memory_id, user_id, session_id, last_k_turns)]
+                logger.info("Memory hooks enabled")
+            else:
+                logger.warning("Memory hooks disabled - missing session_id or memory_id")
+        except Exception as e:
+            logger.error(f"Error creating memory hooks: {e}")
+            memory_hooks = []
+        
         # Create the agent with conversation history, memory hooks, and tools
         agent = Agent(
-            #messages=message_history,
+            messages=message_history,
             model=bedrock_model,
             system_prompt=system_prompt,
-            hooks=[MemoryHookProvider(client, memory_id, user_id, session_id, last_k_turns)],
+            hooks=memory_hooks,
             tools=[get_tables_information, current_time, create_execute_sql_query_tool(user_message, prompt_uuid)],
             callback_handler=None
         )

@@ -12,6 +12,7 @@ The module uses the following SSM parameters:
 
 import boto3
 import json
+import os
 from boto3.dynamodb.conditions import Key
 from typing import List, Dict, Any, Optional
 from datetime import datetime
@@ -22,7 +23,12 @@ try:
     CONFIG = load_config()
 except Exception as e:
     print(f"Error loading configuration from SSM: {e}")
-    CONFIG = {}
+    # Fallback config for local development
+    CONFIG = {
+        "AWS_REGION": os.getenv("AWS_REGION", "us-east-1"),
+        "AGENT_INTERACTIONS_TABLE_NAME": os.getenv("AGENT_INTERACTIONS_TABLE_NAME", "AgentInteractions"),
+        "QUESTION_ANSWERS_TABLE": os.getenv("QUESTION_ANSWERS_TABLE", "QuestionAnswers")
+    }
 
 def save_raw_query_result(user_prompt_uuid, user_prompt, sql_query, sql_query_description, result, message):
     """
@@ -90,6 +96,11 @@ def read_messages_by_session(
         print("AGENT_INTERACTIONS_TABLE_NAME not configured")
         return []
         
+    # Validate session_id parameter
+    if not session_id:
+        print("session_id parameter is required")
+        return []
+        
     try:
         dynamodb_resource = boto3.resource('dynamodb', region_name=CONFIG["AWS_REGION"])
         table = dynamodb_resource.Table(conversation_table)
@@ -128,6 +139,7 @@ def read_messages_by_session(
         
     except Exception as e:
         print(f"Error reading messages from DynamoDB: {e}")
+        # Return empty list on error to prevent app crash
         return []
 
 
@@ -200,6 +212,11 @@ def save_agent_interactions(session_id: str, prompt_uuid: str, starting_message_
         Uses AGENT_INTERACTIONS_TABLE_NAME parameter from SSM for data storage.
     """
     
+    # Validate required parameters
+    if not session_id:
+        print("session_id parameter is required")
+        return False
+        
     messages_to_save = messages_objects_to_strings(messages)
 
     print("Final messages length: " + str(len(messages_to_save)))

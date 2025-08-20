@@ -62,9 +62,16 @@ class MemoryHookProvider(HookProvider):
             event: Agent initialization event
         """
         try:
+            # Validate required parameters
+            if not self.session_id:
+                logger.warning("session_id is empty, skipping memory load")
+                return
+                
             # Load the specified number of conversation turns from memory
             print("************ last_k_turns *********")
             print(self.last_k_turns)
+            print(f"Loading memory with session_id: {self.session_id}")
+            
             recent_turns = self.memory_client.get_last_k_turns(
                 memory_id=self.memory_id,
                 actor_id=self.actor_id,
@@ -107,6 +114,11 @@ class MemoryHookProvider(HookProvider):
         print(messages)
 
         try:
+            # Validate required parameters
+            if not self.session_id:
+                logger.warning("session_id is empty, skipping memory save")
+                return
+                
             last_message = messages[-1]
             
             # Check if the message has the expected structure
