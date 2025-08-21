@@ -2,7 +2,7 @@
 
 > A complete end-to-end intelligent data analysis platform powered by Amazon Bedrock AgentCore and Strands Agents SDK
 
-<div align="center">
+<div align="center"> 
 <img src="./images/data-analyst-assistant-agentcore-strands-agents-sdk.gif" alt="Conversational Data Analyst Assistant Solution with Amazon Bedrock AgentCore">
 </div>
  
