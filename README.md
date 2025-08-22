@@ -1,5 +1,5 @@
 # Video Game Sales Assistant - Conversational Data Analyst Solution
-
+ 
 > A complete end-to-end intelligent data analysis platform powered by Amazon Bedrock AgentCore and Strands Agents SDK
 
 <div align="center"> 
